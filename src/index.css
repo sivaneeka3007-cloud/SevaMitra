@@ -1,0 +1,79 @@
+@import "tailwindcss";
+
+@layer base {
+  :root {
+    --bg-cream: #FAF6EF;
+    --card-bg: #FFFFFF;
+    --border-color: #E6DCBF;
+    --text-primary: #1F2421;
+    --text-secondary: #585A56;
+    
+    /* Default sector: Construction (Warm Saffron / Orange) */
+    --sector-accent: #D9531E;
+    --sector-accent-hover: #BF4212;
+    --sector-accent-light: #FFF2EB;
+    --sector-accent-border: #F7B591;
+    --sector-accent-dark: #8C2C07;
+  }
+
+  [data-sector="construction"] {
+    --sector-accent: #D9531E;
+    --sector-accent-hover: #BF4212;
+    --sector-accent-light: #FFF2EB;
+    --sector-accent-border: #F7B591;
+    --sector-accent-dark: #8C2C07;
+  }
+
+  [data-sector="hospital"] {
+    --sector-accent: #0E8373;
+    --sector-accent-hover: #0A695C;
+    --sector-accent-light: #EEF9F7;
+    --sector-accent-border: #80D1C6;
+    --sector-accent-dark: #074C42;
+  }
+
+  *, *::before, *::after {
+    box-sizing: border-box;
+  }
+
+  html {
+    font-size: 18px; /* High legibility base font size */
+    font-family: system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Noto Sans", "Noto Sans Tamil", "Noto Sans Devanagari", sans-serif;
+    background-color: var(--bg-cream);
+    color: var(--text-primary);
+    -webkit-font-smoothing: antialiased;
+    overflow-x: hidden;
+    max-width: 100vw;
+  }
+
+  body {
+    background-color: var(--bg-cream);
+    min-height: 100vh;
+    overflow-x: hidden;
+    max-width: 100vw;
+    margin: 0;
+    padding: 0;
+  }
+
+  /* Accessible high-contrast focus rings */
+  *:focus-visible {
+    outline: 3px solid var(--sector-accent) !important;
+    outline-offset: 2px !important;
+  }
+}
+
+/* Reduced motion */
+@media (prefers-reduced-motion: reduce) {
+  * {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
+  }
+}
+
+/* Paper receipt perforated edges */
+.receipt-paper {
+  background: #FFFDF9;
+  border: 2px dashed #D4C5A5;
+  box-shadow: 0 4px 12px rgba(139, 115, 85, 0.08);
+}
