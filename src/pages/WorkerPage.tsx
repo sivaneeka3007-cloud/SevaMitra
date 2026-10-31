@@ -14,7 +14,7 @@ export const WorkerPage: React.FC<WorkerPageProps> = ({ store }) => {
     currentActiveShift,
     shifts,
     logs,
-    currentSectorConfig,
+    currentLocalizedSectorConfig,
     language,
     currentPayslip,
     checkInWorker,
@@ -29,7 +29,7 @@ export const WorkerPage: React.FC<WorkerPageProps> = ({ store }) => {
       activeShift={currentActiveShift}
       shifts={shifts}
       logs={logs}
-      sectorConfig={currentSectorConfig}
+      sectorConfig={currentLocalizedSectorConfig}
       language={language}
       payslip={currentPayslip}
       onCheckIn={checkInWorker}

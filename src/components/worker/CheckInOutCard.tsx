@@ -13,7 +13,7 @@ import {
 import { getTranslations } from '../../i18n';
 import { LanguageCode, SectorConfig, ShiftRecord, Worker } from '../../types';
 import { formatDuration } from '../../utils/shiftCalculations';
-import { formatHourlyRate, formatINR } from '../../utils/currencyFormatter';
+import { formatHourlyRate } from '../../utils/currencyFormatter';
 
 interface CheckInOutCardProps {
   worker: Worker;
@@ -96,7 +96,7 @@ export const CheckInOutCard: React.FC<CheckInOutCardProps> = ({
               isTooLong ? (
                 <div className="inline-flex items-center gap-1.5 bg-[#FDE8E8] text-[#9B1C1C] px-3 py-1 rounded-full border-2 border-[#F8B4B4] font-black text-base">
                   <AlertOctagon className="w-5 h-5 text-[#9B1C1C] shrink-0" />
-                  <span>ALERT: Shift Too Long</span>
+                  <span>{t.statusShiftTooLong}</span>
                 </div>
               ) : isOvertimeActive ? (
                 <div className="inline-flex items-center gap-1.5 bg-[#FEF08A] text-[#854D0E] px-3 py-1 rounded-full border-2 border-[#FACC15] font-black text-base">
@@ -124,7 +124,7 @@ export const CheckInOutCard: React.FC<CheckInOutCardProps> = ({
             {t.hourlyRateLabel}
           </span>
           <p className="text-xl sm:text-2xl font-black text-[#1F2421]">
-            {formatHourlyRate(worker.hourlyRate)}
+            {formatHourlyRate(worker.hourlyRate, language)}
           </p>
         </div>
       </div>
@@ -149,12 +149,12 @@ export const CheckInOutCard: React.FC<CheckInOutCardProps> = ({
             {/* Overtime friendly badge */}
             <div className="pt-1 flex flex-wrap items-center justify-center gap-2 text-xs sm:text-sm">
               <span className="font-bold text-[#585A56]">
-                Regular: <strong>{Math.min(8, currentDurationHours).toFixed(1)}h</strong>
+                {t.regularShort}: <strong>{Math.min(8, currentDurationHours).toFixed(1)}h</strong>
               </span>
               {isOvertimeActive && (
                 <span className="inline-flex items-center gap-1 font-black text-[#854D0E] bg-[#FEF08A] px-2 py-0.5 rounded-full border border-[#FACC15]">
                   <Zap className="w-3.5 h-3.5 fill-current" />
-                  Overtime: +{overtimeHoursLive.toFixed(1)}h @ 1.5x
+                  {t.overtimeShort}: +{overtimeHoursLive.toFixed(1)}h @ 1.5x
                 </span>
               )}
             </div>
@@ -192,7 +192,7 @@ export const CheckInOutCard: React.FC<CheckInOutCardProps> = ({
                 className="text-xs font-black text-[#585A56] uppercase tracking-wider block mb-1 flex items-center gap-1.5"
               >
                 <Clock className="w-4 h-4 text-[#D9531E]" />
-                Shift Hours
+                {t.shiftHoursLabel}
               </label>
               <select
                 id="worker-shift-select"
@@ -228,13 +228,13 @@ export const CheckInOutCard: React.FC<CheckInOutCardProps> = ({
               <>
                 <Square className="w-10 h-10 sm:w-12 sm:h-12 fill-current" />
                 <span className="text-center px-2 leading-tight">{t.btnCheckOut}</span>
-                <span className="text-[11px] font-bold uppercase tracking-normal opacity-90">Touch to Finish</span>
+                <span className="text-[11px] font-bold uppercase tracking-normal opacity-90">{t.touchToFinish}</span>
               </>
             ) : (
               <>
                 <Play className="w-10 h-10 sm:w-12 sm:h-12 fill-current ml-1" />
                 <span className="text-center px-2 leading-tight">{t.btnCheckIn}</span>
-                <span className="text-[11px] font-bold uppercase tracking-normal opacity-90">Touch to Start</span>
+                <span className="text-[11px] font-bold uppercase tracking-normal opacity-90">{t.touchToStart}</span>
               </>
             )}
           </button>
@@ -248,7 +248,7 @@ export const CheckInOutCard: React.FC<CheckInOutCardProps> = ({
         </div>
         <div className="text-xs sm:text-sm font-bold text-[#3E423A] leading-tight">
           <strong className="block text-[#1F2421] font-black">
-            {sectorConfig.name} Rest Rule:
+            {sectorConfig.name} {t.restRulePrefix}
           </strong>
           <span>{sectorConfig.restRules.ruleDescription}</span>
         </div>

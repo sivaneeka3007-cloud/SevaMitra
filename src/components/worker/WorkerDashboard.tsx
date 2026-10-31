@@ -12,6 +12,7 @@ import { CheckInOutCard } from './CheckInOutCard';
 import { PayslipModal } from './PayslipModal';
 import { ReceiptDisplay } from './ReceiptDisplay';
 import { formatINR } from '../../utils/currencyFormatter';
+import { getLocalizedGroup, getLocalizedRole } from '../../config/sectors';
 
 interface WorkerDashboardProps {
   worker: Worker;
@@ -42,7 +43,6 @@ export const WorkerDashboard: React.FC<WorkerDashboardProps> = ({
   payslip,
   onCheckIn,
   onCheckOut,
-  onSelectLanguage,
 }) => {
   const t = getTranslations(language);
   const [activeTab, setActiveTab] = useState<WorkerTab>('shift');
@@ -72,6 +72,9 @@ export const WorkerDashboard: React.FC<WorkerDashboardProps> = ({
     }
   };
 
+  const localizedRole = getLocalizedRole(worker.role, language);
+  const localizedGroup = getLocalizedGroup(worker.group, language);
+
   return (
     <div className="max-w-3xl mx-auto px-3 sm:px-4 pt-3 pb-24 sm:pb-28 space-y-4 sm:space-y-6 w-full">
       {/* Worker Profile Header with Simple Switcher */}
@@ -97,7 +100,7 @@ export const WorkerDashboard: React.FC<WorkerDashboardProps> = ({
               </span>
             </div>
             <p className="text-xs sm:text-sm font-bold text-[#585A56] truncate">
-              {worker.role} • {sectorConfig.groupLabel}: <strong>{worker.group}</strong>
+              {localizedRole} • {sectorConfig.groupLabel}: <strong>{localizedGroup}</strong>
             </p>
           </div>
         </div>
@@ -116,7 +119,7 @@ export const WorkerDashboard: React.FC<WorkerDashboardProps> = ({
             >
               {sectorWorkers.map((w) => (
                 <option key={w.id} value={w.id}>
-                  {w.name} ({w.role}) {w.activeShiftId ? '• ON SHIFT' : ''}
+                  {w.name} ({getLocalizedRole(w.role, language)}) {w.activeShiftId ? `• ${t.onShiftBadge}` : ''}
                 </option>
               ))}
             </select>
@@ -150,7 +153,7 @@ export const WorkerDashboard: React.FC<WorkerDashboardProps> = ({
               <div className="min-w-0">
                 <span className="font-black text-[#1F2421] text-base sm:text-lg block truncate">{t.viewPayslipBtn}</span>
                 <span className="text-xs font-bold text-[#585A56] truncate block">
-                  Overtime paid at 1.5x in Rupees (₹)
+                  {t.overtimePaidBanner}
                 </span>
               </div>
             </div>
@@ -191,7 +194,7 @@ export const WorkerDashboard: React.FC<WorkerDashboardProps> = ({
                 {t.payslipTitle}
               </h2>
               <p className="text-xs font-bold text-[#585A56]">
-                Shift earnings in Indian Rupees (₹)
+                {t.directPaymentRupees}
               </p>
             </div>
             <button
@@ -199,7 +202,7 @@ export const WorkerDashboard: React.FC<WorkerDashboardProps> = ({
               onClick={() => setIsPayslipModalOpen(true)}
               className="px-3 py-1.5 rounded-xl bg-[#FAF6EF] border-2 border-[#D4C5A5] font-black text-xs sm:text-sm text-[#1F2421] hover:bg-[#E6DCBF] cursor-pointer shrink-0"
             >
-              Full Slip
+              {t.fullSlip}
             </button>
           </div>
 
@@ -208,13 +211,13 @@ export const WorkerDashboard: React.FC<WorkerDashboardProps> = ({
               {/* Take-home Pay Largest */}
               <div className="bg-[#1F2421] text-white rounded-2xl p-4 sm:p-6 border-3 border-black text-center space-y-1">
                 <span className="text-xs font-black uppercase tracking-wider text-amber-300">
-                  {t.netPayLabel} (Take-Home)
+                  {t.netPayLabel} {t.takeHomeLabel}
                 </span>
                 <div className="text-4xl sm:text-5xl font-black font-mono text-amber-300 py-1 truncate">
                   {formatINR(payslip.netPay)}
                 </div>
                 <p className="text-[11px] text-white/80 font-bold">
-                  Calculated with 1.5x overtime
+                  {t.calculatedWithOvertime}
                 </p>
               </div>
 
@@ -225,7 +228,7 @@ export const WorkerDashboard: React.FC<WorkerDashboardProps> = ({
                 className="w-full min-h-[52px] sm:min-h-[60px] rounded-2xl bg-[#D9531E] hover:bg-[#BF4212] text-white font-black text-base sm:text-lg flex items-center justify-center gap-2.5 shadow-md border-2 border-[#8C2C07] cursor-pointer"
               >
                 <Volume2 className="w-6 h-6 sm:w-7 sm:h-7 shrink-0" />
-                <span className="truncate">Listen to Wage Summary Aloud</span>
+                <span className="truncate">{t.listenWageSummary}</span>
               </button>
 
               {/* Summary Items */}
@@ -233,17 +236,17 @@ export const WorkerDashboard: React.FC<WorkerDashboardProps> = ({
                 <div className="bg-[#FAF6EF] p-3 rounded-xl border border-[#E6DCBF]">
                   <span className="text-xs font-bold text-[#585A56] block truncate">{t.basePayLabel}</span>
                   <span className="text-lg font-black text-[#1F2421] block truncate">{formatINR(payslip.regularPay)}</span>
-                  <span className="text-xs text-[#585A56] block mt-0.5">{payslip.regularHours} hrs</span>
+                  <span className="text-xs text-[#585A56] block mt-0.5">{payslip.regularHours} {t.hoursShort}</span>
                 </div>
                 <div className="bg-[#FFF9E6] p-3 rounded-xl border border-[#E6C875]">
                   <span className="text-xs font-bold text-[#854D0E] block truncate">{t.overtimePayLabel}</span>
                   <span className="text-lg font-black text-[#7A5B00] block truncate">{formatINR(payslip.overtimePay)}</span>
-                  <span className="text-xs text-[#854D0E] block mt-0.5">{payslip.overtimeHours} hrs (1.5x)</span>
+                  <span className="text-xs text-[#854D0E] block mt-0.5">{payslip.overtimeHours} {t.hoursShort} (1.5x)</span>
                 </div>
               </div>
             </div>
           ) : (
-            <p className="text-center py-6 text-[#585A56]">No shift data available for this worker.</p>
+            <p className="text-center py-6 text-[#585A56]">{t.noShiftDataAvailable}</p>
           )}
         </div>
       )}
@@ -268,7 +271,7 @@ export const WorkerDashboard: React.FC<WorkerDashboardProps> = ({
           >
             <Clock className="w-5 h-5 shrink-0" />
             <span className="text-xs font-extrabold uppercase tracking-wider truncate">
-              {language === 'ta' ? 'பணி' : language === 'hi' ? 'ड्यूटी' : 'Shift'}
+              {t.tabShift}
             </span>
           </button>
 
@@ -286,7 +289,7 @@ export const WorkerDashboard: React.FC<WorkerDashboardProps> = ({
           >
             <FileCheck className="w-5 h-5 shrink-0" />
             <span className="text-xs font-extrabold uppercase tracking-wider truncate">
-              {language === 'ta' ? 'ரசீது' : language === 'hi' ? 'रसीद' : 'Receipts'}
+              {t.tabReceipts}
             </span>
             {latestReceipt && (
               <span className="absolute top-1 right-5 w-2.5 h-2.5 rounded-full bg-emerald-400 ring-2 ring-white" />
@@ -307,7 +310,7 @@ export const WorkerDashboard: React.FC<WorkerDashboardProps> = ({
           >
             <Wallet className="w-5 h-5 shrink-0" />
             <span className="text-xs font-extrabold uppercase tracking-wider truncate">
-              {language === 'ta' ? 'சம்பளம்' : language === 'hi' ? 'पेस्लिप' : 'Payslip'}
+              {t.tabPayslip}
             </span>
           </button>
         </div>

@@ -315,3 +315,70 @@ describe('WhatsApp Shift Proof Generator', () => {
     expect(hiText).toContain('Verified by FairShift');
   });
 });
+
+describe('Translation Dictionary and Multilingual Localization Parity', () => {
+  it('ensures EN, TA, and HI have the exact same set of keys with no empty values', async () => {
+    const { TRANSLATIONS } = await import('../../i18n/translations');
+
+    const enKeys = Object.keys(TRANSLATIONS.en).sort();
+    const taKeys = Object.keys(TRANSLATIONS.ta).sort();
+    const hiKeys = Object.keys(TRANSLATIONS.hi).sort();
+
+    // Check key count parity
+    expect(enKeys.length).toBeGreaterThan(50);
+    expect(taKeys.length).toBe(enKeys.length);
+    expect(hiKeys.length).toBe(enKeys.length);
+
+    // Check exact key match
+    expect(taKeys).toEqual(enKeys);
+    expect(hiKeys).toEqual(enKeys);
+
+    // Check that no string in any language is empty or whitespace
+    for (const key of enKeys) {
+      const enVal = (TRANSLATIONS.en as Record<string, string>)[key];
+      const taVal = (TRANSLATIONS.ta as Record<string, string>)[key];
+      const hiVal = (TRANSLATIONS.hi as Record<string, string>)[key];
+
+      expect(typeof enVal).toBe('string');
+      expect(enVal.trim().length).toBeGreaterThan(0);
+
+      expect(typeof taVal).toBe('string');
+      expect(taVal.trim().length).toBeGreaterThan(0);
+
+      expect(typeof hiVal).toBe('string');
+      expect(hiVal.trim().length).toBeGreaterThan(0);
+    }
+  });
+
+  it('provides complete localized sector configs for Construction and Hospital in EN, TA, and HI', async () => {
+    const { getLocalizedSectorConfig, getLocalizedRole, getLocalizedGroup } = await import('../../config/sectors');
+
+    // Construction in Tamil
+    const cTa = getLocalizedSectorConfig('construction', 'ta');
+    expect(cTa.name).toBe('கட்டுமான தளம்');
+    expect(cTa.shortName).toBe('கட்டுமானம்');
+    expect(cTa.groupLabel).toBe('மண்டலம்');
+    expect(cTa.groups.length).toBe(4);
+    expect(cTa.jobRoles.length).toBe(8);
+
+    // Hospital in Hindi
+    const hHi = getLocalizedSectorConfig('hospital', 'hi');
+    expect(hHi.name).toBe('अस्पताल एवं स्वास्थ्य सेवा');
+    expect(hHi.shortName).toBe('अस्पताल');
+    expect(hHi.groupLabel).toBe('वार्ड');
+    expect(hHi.groups.length).toBe(5);
+    expect(hHi.jobRoles.length).toBe(8);
+
+    // Role localization helper
+    expect(getLocalizedRole('Site Mason', 'ta')).toContain('மேஸ்திரி');
+    expect(getLocalizedRole('Site Mason', 'hi')).toContain('राजमिस्त्री');
+    expect(getLocalizedRole('ICU Specialist Nurse', 'ta')).toContain('தீவிர சிகிச்சை');
+    expect(getLocalizedRole('ICU Specialist Nurse', 'hi')).toContain('आईसीयू');
+
+    // Group localization helper
+    expect(getLocalizedGroup('Block A', 'ta')).toContain('பகுதி அ');
+    expect(getLocalizedGroup('Block A', 'hi')).toContain('ब्लॉक ए');
+    expect(getLocalizedGroup('ICU', 'ta')).toContain('தீவிர சிகிச்சை');
+    expect(getLocalizedGroup('ICU', 'hi')).toContain('आईसीयू');
+  });
+});

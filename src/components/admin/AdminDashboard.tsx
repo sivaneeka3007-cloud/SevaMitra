@@ -8,17 +8,20 @@ import {
   ArrowRight,
   CheckCircle2,
 } from 'lucide-react';
-import { SectorConfig, ShiftRecord, TimeLogEvent, Worker } from '../../types';
+import { LanguageCode, SectorConfig, ShiftRecord, TimeLogEvent, Worker } from '../../types';
 import { AttendanceOverview } from './AttendanceOverview';
 import { GroupBreakdown } from './GroupBreakdown';
 import { AuditLogViewer } from './AuditLogViewer';
 import { formatHourlyRate } from '../../utils/currencyFormatter';
+import { getTranslations } from '../../i18n';
+import { getLocalizedGroup, getLocalizedRole } from '../../config/sectors';
 
 interface AdminDashboardProps {
   sectorConfig: SectorConfig;
   workers: Worker[];
   shifts: ShiftRecord[];
   logs: TimeLogEvent[];
+  language?: LanguageCode;
   onSelectWorkerForPreview?: (workerId: string) => void;
   onNavigateToWorkerUI?: () => void;
 }
@@ -30,9 +33,11 @@ export const AdminDashboard: React.FC<AdminDashboardProps> = ({
   workers,
   shifts,
   logs,
+  language = 'en',
   onSelectWorkerForPreview,
   onNavigateToWorkerUI,
 }) => {
+  const t = getTranslations(language);
   const [activeTab, setActiveTab] = useState<AdminTab>('overview');
   const [selectedGroupFilter, setSelectedGroupFilter] = useState<string>('all');
   const isConstruction = sectorConfig.id === 'construction';
@@ -53,13 +58,13 @@ export const AdminDashboard: React.FC<AdminDashboardProps> = ({
         <div>
           <div className="flex items-center gap-1.5 text-amber-300 text-xs font-black uppercase tracking-wider">
             <ShieldCheck className="w-4 h-4 text-amber-300" />
-            <span>Employer & Operations Command</span>
+            <span>{t.adminCommand}</span>
           </div>
           <h1 className="text-2xl sm:text-3xl font-black tracking-tight text-white mt-1">
-            {sectorConfig.name} Portal
+            {sectorConfig.name} {t.adminPortalTitle}
           </h1>
           <p className="text-xs sm:text-sm font-bold text-white/80 mt-0.5">
-            Shift hours, transparent overtime in Rupees (₹), and rest rule compliance (UN SDG 8).
+            {t.adminHeaderDesc}
           </p>
         </div>
 
@@ -73,7 +78,7 @@ export const AdminDashboard: React.FC<AdminDashboardProps> = ({
                 : 'bg-[#0E8373] hover:bg-[#0A695C] text-white border-[#074C42]'
             }`}
           >
-            <span>Worker Screen</span>
+            <span>{t.workerScreenBtn}</span>
             <ArrowRight className="w-4 h-4" />
           </button>
         )}
@@ -93,7 +98,7 @@ export const AdminDashboard: React.FC<AdminDashboardProps> = ({
           }`}
         >
           <LayoutDashboard className="w-5 h-5 shrink-0" />
-          <span>Operational Overview</span>
+          <span>{t.tabOperationalOverview}</span>
         </button>
 
         <button
@@ -108,7 +113,7 @@ export const AdminDashboard: React.FC<AdminDashboardProps> = ({
           }`}
         >
           <FileSpreadsheet className="w-5 h-5 shrink-0" />
-          <span>Audit Ledger</span>
+          <span>{t.tabAuditLedger}</span>
           <span className="text-xs bg-[#FAF6EF] text-[#585A56] font-mono font-black px-2 py-0.5 rounded-full border border-[#E6DCBF]">
             {sectorLogs.length}
           </span>
@@ -122,12 +127,14 @@ export const AdminDashboard: React.FC<AdminDashboardProps> = ({
             sectorConfig={sectorConfig}
             workers={workers}
             shifts={shifts}
+            language={language}
           />
 
           <GroupBreakdown
             sectorConfig={sectorConfig}
             workers={workers}
             shifts={shifts}
+            language={language}
           />
 
           {/* Tidy Staff Roster & Safety Register */}
@@ -135,25 +142,25 @@ export const AdminDashboard: React.FC<AdminDashboardProps> = ({
             <div className="flex flex-wrap items-center justify-between gap-3 pb-3 border-b-2 border-[#FAF6EF]">
               <div>
                 <h3 className="font-black text-lg sm:text-xl text-[#1F2421]">
-                  {sectorConfig.name} Staff Roster & Safety Register
+                  {sectorConfig.name} {t.staffRosterTitle}
                 </h3>
                 <p className="text-xs font-bold text-[#585A56] mt-0.5">
-                  Real-time duty status, wage rates in Indian Rupees (₹), and rest rule alerts
+                  {t.staffRosterDesc}
                 </p>
               </div>
 
               {/* Filter */}
               <div className="flex items-center gap-2">
-                <span className="text-xs font-bold text-[#585A56]">Filter {sectorConfig.groupLabel}:</span>
+                <span className="text-xs font-bold text-[#585A56]">{t.filterBy} {sectorConfig.groupLabel}:</span>
                 <select
                   value={selectedGroupFilter}
                   onChange={(e) => setSelectedGroupFilter(e.target.value)}
                   className="min-h-[44px] px-3.5 py-1.5 bg-[#FAF6EF] border-2 border-[#D4C5A5] rounded-xl text-xs font-black text-[#1F2421] cursor-pointer"
                 >
-                  <option value="all">All {sectorConfig.groupLabel}s</option>
+                  <option value="all">{t.all} {sectorConfig.groupLabel}s</option>
                   {sectorConfig.groups.map((group) => (
                     <option key={group} value={group}>
-                      {group}
+                      {getLocalizedGroup(group, language)}
                     </option>
                   ))}
                 </select>
@@ -164,13 +171,13 @@ export const AdminDashboard: React.FC<AdminDashboardProps> = ({
               <table className="w-full text-left text-sm border-collapse">
                 <thead>
                   <tr className="border-b-2 border-[#E6DCBF] text-[#585A56] font-black uppercase tracking-wider text-xs bg-[#FAF6EF]">
-                    <th className="py-3 px-3.5">Worker</th>
-                    <th className="py-3 px-3.5">Role</th>
+                    <th className="py-3 px-3.5">{t.thWorker}</th>
+                    <th className="py-3 px-3.5">{t.thRole}</th>
                     <th className="py-3 px-3.5">{sectorConfig.groupLabel}</th>
-                    <th className="py-3 px-3.5">Status</th>
-                    <th className="py-3 px-3.5">Hourly Rate (₹)</th>
-                    <th className="py-3 px-3.5">Rest Safety</th>
-                    <th className="py-3 px-3.5 text-right">Actions</th>
+                    <th className="py-3 px-3.5">{t.thStatus}</th>
+                    <th className="py-3 px-3.5">{t.thHourlyRate}</th>
+                    <th className="py-3 px-3.5">{t.thRestSafety}</th>
+                    <th className="py-3 px-3.5 text-right">{t.thActions}</th>
                   </tr>
                 </thead>
                 <tbody className="divide-y divide-[#E6DCBF]">
@@ -198,12 +205,14 @@ export const AdminDashboard: React.FC<AdminDashboardProps> = ({
                           </div>
                         </td>
 
-                        <td className="py-3.5 px-3.5 font-bold text-[#1F2421]">{worker.role}</td>
+                        <td className="py-3.5 px-3.5 font-bold text-[#1F2421]">
+                          {getLocalizedRole(worker.role, language)}
+                        </td>
 
                         <td className="py-3.5 px-3.5">
                           <span className="inline-flex items-center gap-1 font-bold text-[#3E423A] bg-[#FAF6EF] border border-[#E6DCBF] px-2 py-0.5 rounded-lg text-xs">
                             <MapPin className="w-3.5 h-3.5 text-[#585A56]" />
-                            {worker.group}
+                            {getLocalizedGroup(worker.group, language)}
                           </span>
                         </td>
 
@@ -211,18 +220,18 @@ export const AdminDashboard: React.FC<AdminDashboardProps> = ({
                           {isOnDuty ? (
                             <span className="inline-flex items-center gap-1 text-xs font-black text-[#166534] bg-[#DCFCE7] border border-[#86EFAC] px-2.5 py-0.5 rounded-full">
                               <span className="w-2 h-2 rounded-full bg-[#22C55E] animate-pulse" />
-                              ON SHIFT
+                              {t.onShiftBadge}
                             </span>
                           ) : (
                             <span className="inline-flex items-center gap-1 text-xs font-bold text-[#585A56] bg-[#F3F4F6] border border-[#D1D5DB] px-2.5 py-0.5 rounded-full">
                               <span className="w-2 h-2 rounded-full bg-[#9CA3AF]" />
-                              Off Duty
+                              {t.offDutyBadge}
                             </span>
                           )}
                         </td>
 
                         <td className="py-3.5 px-3.5 font-black text-[#1F2421]">
-                          {formatHourlyRate(worker.hourlyRate)}
+                          {formatHourlyRate(worker.hourlyRate, language)}
                         </td>
 
                         <td className="py-3.5 px-3.5">
@@ -232,12 +241,12 @@ export const AdminDashboard: React.FC<AdminDashboardProps> = ({
                               className="inline-flex items-center gap-1 font-black text-xs text-[#9B1C1C] bg-[#FDE8E8] border border-[#F8B4B4] px-2 py-0.5 rounded-lg"
                             >
                               <AlertTriangle className="w-3.5 h-3.5 text-[#9B1C1C] shrink-0" />
-                              <span>{violations.length} Alert{violations.length > 1 ? 's' : ''}</span>
+                              <span>{violations.length} {violations.length > 1 ? t.alerts : t.alert}</span>
                             </span>
                           ) : (
                             <span className="text-xs text-[#166534] font-black flex items-center gap-1">
                               <CheckCircle2 className="w-4 h-4 text-[#166534]" />
-                              Safe
+                              {t.safeBadge}
                             </span>
                           )}
                         </td>
@@ -249,7 +258,7 @@ export const AdminDashboard: React.FC<AdminDashboardProps> = ({
                               onClick={() => onSelectWorkerForPreview(worker.id)}
                               className="min-h-[38px] px-3 py-1 rounded-xl bg-[#FAF6EF] hover:bg-[#E6DCBF] border border-[#D4C5A5] text-[#1F2421] font-black text-xs transition-colors cursor-pointer"
                             >
-                              Test Worker
+                              {t.testWorkerBtn}
                             </button>
                           )}
                         </td>
@@ -265,7 +274,7 @@ export const AdminDashboard: React.FC<AdminDashboardProps> = ({
 
       {/* Tab 2: Working Immutable Audit Ledger */}
       {activeTab === 'ledger' && (
-        <AuditLogViewer logs={sectorLogs} sectorName={sectorConfig.name} />
+        <AuditLogViewer logs={sectorLogs} sectorName={sectorConfig.name} language={language} />
       )}
     </div>
   );

@@ -31,7 +31,7 @@ export const HomeScreen: React.FC<HomeScreenProps> = ({
           FairShift
         </h1>
         <p className="text-xs sm:text-base font-bold text-[#4A4D48]">
-          Honest shift hours & safe rest for every worker.
+          {t.heroTagline}
         </p>
       </div>
 
@@ -46,7 +46,7 @@ export const HomeScreen: React.FC<HomeScreenProps> = ({
               ? 'border-[#D9531E] hover:border-[#BF4212]'
               : 'border-[#0E8373] hover:border-[#0A695C]'
           }`}
-          aria-label="I am a Worker"
+          aria-label={t.iAmWorker}
         >
           <div className="flex items-center justify-between gap-3 w-full">
             <div className="flex items-center gap-3">
@@ -69,7 +69,7 @@ export const HomeScreen: React.FC<HomeScreenProps> = ({
                   {t.workerTitle}
                 </span>
                 <h2 className="text-xl sm:text-2xl font-black text-[#1F2421] mt-0.5 leading-tight">
-                  I am a Worker
+                  {t.iAmWorker}
                 </h2>
               </div>
             </div>
@@ -101,7 +101,7 @@ export const HomeScreen: React.FC<HomeScreenProps> = ({
           </div>
 
           <p className="text-xs sm:text-sm font-bold text-[#585A56] leading-relaxed hidden sm:block">
-            Start or stop your shift. Check today's hours, get your verified paper receipt code, and hear your earnings read aloud in your language.
+            {t.workerCardDesc}
           </p>
 
           <div
@@ -109,7 +109,7 @@ export const HomeScreen: React.FC<HomeScreenProps> = ({
               isConstruction ? 'bg-[#D9531E]' : 'bg-[#0E8373]'
             }`}
           >
-            <span>Tap to Enter as Worker</span>
+            <span>{t.enterAsWorker}</span>
             <ArrowRight className="w-5 h-5" />
           </div>
         </button>
@@ -119,7 +119,7 @@ export const HomeScreen: React.FC<HomeScreenProps> = ({
           type="button"
           onClick={() => onSelectRole('admin')}
           className="group bg-white hover:bg-[#FFFDF9] rounded-2xl border-3 border-[#1F2421] hover:border-black p-3.5 sm:p-6 text-left transition-all shadow-md hover:shadow-lg flex flex-col justify-between gap-2.5 sm:gap-4 cursor-pointer w-full"
-          aria-label="I am an Employer or Admin"
+          aria-label={t.iAmAdmin}
         >
           <div className="flex items-center justify-between gap-3 w-full">
             <div className="flex items-center gap-3">
@@ -132,7 +132,7 @@ export const HomeScreen: React.FC<HomeScreenProps> = ({
                   {t.adminTitle}
                 </span>
                 <h2 className="text-xl sm:text-2xl font-black text-[#1F2421] mt-0.5 leading-tight">
-                  I am an Admin
+                  {t.iAmAdmin}
                 </h2>
               </div>
             </div>
@@ -157,11 +157,11 @@ export const HomeScreen: React.FC<HomeScreenProps> = ({
           </div>
 
           <p className="text-xs sm:text-sm font-bold text-[#585A56] leading-relaxed hidden sm:block">
-            Live site attendance, total overtime hours in ₹, zone/ward breakdown, rest rule safety warnings, and immutable receipts ledger.
+            {t.adminCardDesc}
           </p>
 
           <div className="min-h-[48px] px-4 py-2 rounded-xl bg-[#1F2421] text-white font-black text-sm sm:text-base flex items-center justify-between shadow-xs transition-transform group-hover:translate-x-1">
-            <span>Tap to Enter as Admin</span>
+            <span>{t.enterAsAdmin}</span>
             <ArrowRight className="w-5 h-5 text-amber-300" />
           </div>
         </button>

@@ -35,7 +35,7 @@ export const Header: React.FC<HeaderProps> = ({
         <button
           onClick={() => onNavigate('home')}
           className="flex items-center gap-2 text-left group p-0.5 rounded-xl cursor-pointer"
-          aria-label="FairShift Home"
+          aria-label={t.home}
         >
           <div
             className={`w-9 h-9 sm:w-11 sm:h-11 rounded-xl flex items-center justify-center font-black text-white shadow-xs border-2 transition-transform group-hover:scale-105 ${
@@ -54,10 +54,10 @@ export const Header: React.FC<HeaderProps> = ({
                   isConstruction ? 'bg-[#D9531E]' : 'bg-[#0E8373]'
                 }`}
               >
-                SDG 8
+                {t.sdgBadge}
               </span>
             </div>
-            <p className="text-[11px] text-[#585A56] font-bold hidden sm:block">Shift Workers & Employers</p>
+            <p className="text-[11px] text-[#585A56] font-bold hidden sm:block">{t.appSubtitle}</p>
           </div>
         </button>
 
@@ -70,8 +70,8 @@ export const Header: React.FC<HeaderProps> = ({
           {onResetDemoData && (
             <button
               onClick={onResetDemoData}
-              title="Reset demo shift data"
-              aria-label="Reset demo shift data"
+              title={t.resetDemoData}
+              aria-label={t.resetDemoData}
               className="text-[#585A56] hover:text-[#1F2421] p-1.5 rounded-lg flex items-center justify-center cursor-pointer min-h-[36px] min-w-[36px]"
             >
               <RotateCcw className="w-4 h-4" />
@@ -86,6 +86,7 @@ export const Header: React.FC<HeaderProps> = ({
           <SectorPicker
             activeSectorId={activeSectorId}
             onSelectSector={onSelectSector}
+            language={language}
             variant="compact"
           />
         </div>
@@ -111,10 +112,10 @@ export const Header: React.FC<HeaderProps> = ({
               type="button"
               onClick={() => onNavigate('home')}
               className="min-h-[48px] px-2 py-2 rounded-xl text-xs sm:text-sm font-black flex items-center justify-center gap-1.5 sm:gap-2 transition-all cursor-pointer border-2 active:scale-98 bg-white text-[#1F2421] hover:bg-[#FAF6EF] border-[#D4C5A5] shadow-2xs"
-              aria-label="Home"
+              aria-label={t.home}
             >
               <Home className="w-4 h-4 sm:w-5 sm:h-5 shrink-0 text-[#D9531E]" />
-              <span className="truncate">Home</span>
+              <span className="truncate">{t.home}</span>
             </button>
 
             {/* Button 2: Worker */}
@@ -128,11 +129,11 @@ export const Header: React.FC<HeaderProps> = ({
                     : 'bg-[#0E8373] text-white border-[#074C42] shadow-xs'
                   : 'bg-white text-[#1F2421] hover:bg-[#FAF6EF] border-[#D4C5A5] shadow-2xs'
               }`}
-              aria-label="Worker"
+              aria-label={t.worker}
               aria-current={currentView === 'worker' ? 'page' : undefined}
             >
               <User className="w-4 h-4 sm:w-5 sm:h-5 shrink-0" />
-              <span className="truncate">Worker</span>
+              <span className="truncate">{t.worker}</span>
             </button>
 
             {/* Button 3: Admin */}
@@ -144,11 +145,11 @@ export const Header: React.FC<HeaderProps> = ({
                   ? 'bg-[#1F2421] text-white border-black shadow-xs'
                   : 'bg-white text-[#1F2421] hover:bg-[#FAF6EF] border-[#D4C5A5] shadow-2xs'
               }`}
-              aria-label="Admin"
+              aria-label={t.admin}
               aria-current={currentView === 'admin' ? 'page' : undefined}
             >
               <Building2 className="w-4 h-4 sm:w-5 sm:h-5 shrink-0 text-amber-400" />
-              <span className="truncate">Admin</span>
+              <span className="truncate">{t.admin}</span>
             </button>
           </nav>
         </div>

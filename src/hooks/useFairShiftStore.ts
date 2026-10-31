@@ -4,7 +4,7 @@
  */
 
 import { useCallback, useEffect, useState } from 'react';
-import { getSectorConfig } from '../config/sectors';
+import { getLocalizedSectorConfig, getSectorConfig } from '../config/sectors';
 import { generateSeedShifts, SEEDED_WORKERS } from '../data/seedData';
 import { LanguageCode, SectorId, ShiftRecord, TimeLogEvent, Worker } from '../types';
 import { calculatePayslip } from '../utils/payslipCalculations';
@@ -25,12 +25,15 @@ export interface FairShiftStoreState {
 }
 
 function getInitialState(): FairShiftStoreState {
+  const savedLang = (typeof window !== 'undefined' ? localStorage.getItem('fairshift_language') : null) as LanguageCode | null;
+  const initialLang: LanguageCode = (savedLang === 'ta' || savedLang === 'hi' || savedLang === 'en') ? savedLang : 'en';
+
   if (typeof window === 'undefined') {
     const { shifts, logs } = generateSeedShifts();
     return {
       activeSectorId: 'construction',
       activeWorkerId: 'C-01',
-      language: 'en',
+      language: initialLang,
       workers: SEEDED_WORKERS,
       shifts,
       logs,
@@ -42,7 +45,10 @@ function getInitialState(): FairShiftStoreState {
     if (saved) {
       const parsed = JSON.parse(saved);
       if (Array.isArray(parsed.workers) && Array.isArray(parsed.shifts) && Array.isArray(parsed.logs) && parsed.shifts.length > 0) {
-        return parsed;
+        return {
+          ...parsed,
+          language: initialLang || parsed.language || 'en',
+        };
       }
     }
   } catch (err) {
@@ -59,7 +65,7 @@ function getInitialState(): FairShiftStoreState {
   const initial: FairShiftStoreState = {
     activeSectorId: 'construction',
     activeWorkerId: 'C-01',
-    language: 'en',
+    language: initialLang,
     workers: SEEDED_WORKERS,
     shifts,
     logs,
@@ -146,6 +152,11 @@ export function useFairShiftStore() {
 
   const setLanguage = useCallback(
     (language: LanguageCode) => {
+      try {
+        localStorage.setItem('fairshift_language', language);
+      } catch {
+        // ignore
+      }
       saveState((prev) => ({
         ...prev,
         language,
@@ -376,8 +387,9 @@ export function useFairShiftStore() {
     state.workers.find((w) => w.sectorId === state.activeSectorId) ||
     state.workers[0];
 
-  // Current sector config
+  // Current sector config (base and localized)
   const currentSectorConfig = getSectorConfig(state.activeSectorId);
+  const currentLocalizedSectorConfig = getLocalizedSectorConfig(state.activeSectorId, state.language);
 
   // Active shift for current worker if any
   const currentActiveShift = state.shifts.find(
@@ -410,6 +422,7 @@ export function useFairShiftStore() {
     logs: state.logs,
     currentWorker,
     currentSectorConfig,
+    currentLocalizedSectorConfig,
     currentActiveShift,
     currentWorkerShifts,
     currentPayslip,

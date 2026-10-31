@@ -9,10 +9,11 @@ interface AdminPageProps {
 
 export const AdminPage: React.FC<AdminPageProps> = ({ store, onNavigateToWorkerUI }) => {
   const {
-    currentSectorConfig,
+    currentLocalizedSectorConfig,
     workers,
     shifts,
     logs,
+    language,
     setActiveWorkerId,
   } = store;
 
@@ -23,10 +24,11 @@ export const AdminPage: React.FC<AdminPageProps> = ({ store, onNavigateToWorkerU
 
   return (
     <AdminDashboard
-      sectorConfig={currentSectorConfig}
+      sectorConfig={currentLocalizedSectorConfig}
       workers={workers}
       shifts={shifts}
       logs={logs}
+      language={language}
       onSelectWorkerForPreview={handleSelectWorkerForPreview}
       onNavigateToWorkerUI={onNavigateToWorkerUI}
     />

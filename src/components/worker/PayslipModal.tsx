@@ -13,6 +13,7 @@ import {
 import { getTranslations } from '../../i18n';
 import { LanguageCode, PayslipBreakdown, SectorConfig } from '../../types';
 import { formatINR } from '../../utils/currencyFormatter';
+import { getLocalizedRole } from '../../config/sectors';
 
 interface PayslipModalProps {
   isOpen: boolean;
@@ -26,7 +27,6 @@ export const PayslipModal: React.FC<PayslipModalProps> = ({
   isOpen,
   onClose,
   payslip,
-  sectorConfig,
   language,
 }) => {
   const t = getTranslations(language);
@@ -87,6 +87,8 @@ export const PayslipModal: React.FC<PayslipModalProps> = ({
     setIsSpeaking(true);
   };
 
+  const localizedRole = getLocalizedRole(payslip.role, language);
+
   return (
     <div
       className="fixed inset-0 z-50 flex items-center justify-center p-3 sm:p-4 bg-black/60 backdrop-blur-xs overflow-y-auto"
@@ -100,7 +102,7 @@ export const PayslipModal: React.FC<PayslipModalProps> = ({
           <div>
             <div className="flex items-center gap-1.5 text-[#D9531E] text-xs font-black uppercase tracking-wider">
               <ShieldCheck className="w-4 h-4 text-[#D9531E] shrink-0" />
-              <span>UN SDG 8.5 • Wages in Rupees (₹)</span>
+              <span>{t.unSdgWageNotice}</span>
             </div>
             <h2 id="payslip-modal-title" className="text-xl sm:text-2xl font-black text-[#1F2421] mt-0.5">
               {t.payslipTitle}
@@ -123,7 +125,7 @@ export const PayslipModal: React.FC<PayslipModalProps> = ({
           <div className="min-w-0">
             <h3 className="font-black text-[#1F2421] text-base truncate">{payslip.workerName}</h3>
             <p className="text-xs font-black text-[#585A56] truncate">
-              {payslip.role} • ID: {payslip.workerId}
+              {localizedRole} • ID: {payslip.workerId}
             </p>
           </div>
           <div className="text-right shrink-0">
@@ -157,7 +159,7 @@ export const PayslipModal: React.FC<PayslipModalProps> = ({
                 <div className="text-left min-w-0">
                   <span className="block text-white leading-tight truncate">{t.readAloudBtn}</span>
                   <span className="text-[11px] text-amber-200/90 font-bold block truncate">
-                    Touch to listen in your language
+                    {t.touchToListenInLang}
                   </span>
                 </div>
               </>
@@ -168,7 +170,7 @@ export const PayslipModal: React.FC<PayslipModalProps> = ({
         {/* Visual Breakdown Cards with Icons */}
         <div className="space-y-2.5">
           <h4 className="text-xs font-black uppercase tracking-wider text-[#585A56]">
-            Itemized Shift Earnings
+            {t.itemizedShiftEarnings}
           </h4>
 
           {/* 1. Base Earnings Card */}
@@ -180,7 +182,7 @@ export const PayslipModal: React.FC<PayslipModalProps> = ({
               <div className="min-w-0">
                 <span className="font-black text-[#1F2421] text-sm sm:text-base block truncate">{t.basePayLabel}</span>
                 <span className="text-xs font-bold text-[#585A56] truncate block">
-                  {payslip.regularHours}h × {formatINR(payslip.hourlyRate)}/hr
+                  {payslip.regularHours} {t.hoursShort} × {formatINR(payslip.hourlyRate)}/{t.hoursShort}
                 </span>
               </div>
             </div>
@@ -203,7 +205,7 @@ export const PayslipModal: React.FC<PayslipModalProps> = ({
                   </span>
                 </div>
                 <span className="text-xs font-bold text-[#854D0E] truncate block">
-                  {payslip.overtimeHours}h × {formatINR(payslip.overtimeRate)}/hr
+                  {payslip.overtimeHours} {t.hoursShort} × {formatINR(payslip.overtimeRate)}/{t.hoursShort}
                 </span>
               </div>
             </div>
@@ -224,17 +226,32 @@ export const PayslipModal: React.FC<PayslipModalProps> = ({
               </span>
             </div>
 
-            {payslip.deductions.map((d) => (
-              <div key={d.id} className="flex items-center justify-between text-xs font-bold text-[#585A56]">
-                <div className="min-w-0 pr-2">
-                  <span className="text-[#1F2421] font-black block truncate">{d.label}</span>
-                  <span className="text-[10px] text-[#585A56] truncate block">{d.description}</span>
+            {payslip.deductions.map((d) => {
+              const label =
+                d.id === 'provident-fund'
+                  ? t.providentFundLabel
+                  : d.id === 'esi-health'
+                  ? t.esiHealthLabel
+                  : d.label;
+              const desc =
+                d.id === 'provident-fund'
+                  ? t.providentFundDesc
+                  : d.id === 'esi-health'
+                  ? t.esiHealthDesc
+                  : d.description;
+
+              return (
+                <div key={d.id} className="flex items-center justify-between text-xs font-bold text-[#585A56]">
+                  <div className="min-w-0 pr-2">
+                    <span className="text-[#1F2421] font-black block truncate">{label}</span>
+                    <span className="text-[10px] text-[#585A56] truncate block">{desc}</span>
+                  </div>
+                  <span className="font-black text-[#C81E1E] shrink-0">
+                    -{formatINR(d.amount)}
+                  </span>
                 </div>
-                <span className="font-black text-[#C81E1E] shrink-0">
-                  -{formatINR(d.amount)}
-                </span>
-              </div>
-            ))}
+              );
+            })}
           </div>
         </div>
 
@@ -246,7 +263,7 @@ export const PayslipModal: React.FC<PayslipModalProps> = ({
               <span>{t.netPayLabel}</span>
             </div>
             <p className="text-[11px] text-white/80 font-bold">
-              Direct payment in Rupees
+              {t.directPaymentRupees}
             </p>
           </div>
 
@@ -261,7 +278,7 @@ export const PayslipModal: React.FC<PayslipModalProps> = ({
         <div className="bg-[#FAF6EF] rounded-xl p-3 text-xs text-[#585A56] font-bold border border-[#E6DCBF] flex items-start gap-2">
           <HelpCircle className="w-4 h-4 text-[#D9531E] shrink-0 mt-0.5" />
           <p className="leading-tight">
-            All overtime beyond 8 hours is automatically paid at 1.5 times in Indian Rupees (₹).
+            {t.overtimeExplanationNotice}
           </p>
         </div>
 

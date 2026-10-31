@@ -9,10 +9,12 @@ import { HomeScreen } from './pages/HomeScreen';
 import { WorkerPage } from './pages/WorkerPage';
 import { AdminPage } from './pages/AdminPage';
 import { useFairShiftStore } from './hooks/useFairShiftStore';
+import { getTranslations } from './i18n';
 
 export default function App() {
   const [currentView, setCurrentView] = useState<'home' | 'worker' | 'admin'>('home');
   const store = useFairShiftStore();
+  const t = getTranslations(store.language);
 
   return (
     <div
@@ -34,7 +36,7 @@ export default function App() {
       <main className="flex-1 pb-12" id="main-content">
         {currentView === 'home' && (
           <HomeScreen
-            activeSectorConfig={store.currentSectorConfig}
+            activeSectorConfig={store.currentLocalizedSectorConfig}
             onSelectSector={store.setActiveSectorId}
             language={store.language}
             onSelectLanguage={store.setLanguage}
@@ -57,31 +59,31 @@ export default function App() {
         <div className="max-w-7xl mx-auto flex flex-col sm:flex-row items-center justify-between gap-4 text-center sm:text-left">
           <div className="space-y-1">
             <p className="text-slate-200 font-bold">
-              FairShift • United Nations Sustainable Development Goal 8
+              {t.footerSdgTitle}
             </p>
             <p className="text-slate-400">
-              Promote sustained, inclusive, and sustainable economic growth, full and productive employment, and decent work for all.
+              {t.footerSdgDesc}
             </p>
           </div>
 
           <div className="flex items-center gap-4 text-slate-300">
             <button
               onClick={() => setCurrentView('home')}
-              className="hover:text-white underline focus:outline-hidden focus:ring-1 focus:ring-white rounded px-1"
+              className="hover:text-white underline focus:outline-hidden focus:ring-1 focus:ring-white rounded px-1 cursor-pointer"
             >
-              Home
+              {t.home}
             </button>
             <button
               onClick={() => setCurrentView('worker')}
-              className="hover:text-white underline focus:outline-hidden focus:ring-1 focus:ring-white rounded px-1"
+              className="hover:text-white underline focus:outline-hidden focus:ring-1 focus:ring-white rounded px-1 cursor-pointer"
             >
-              Worker Portal
+              {t.workerTitle}
             </button>
             <button
               onClick={() => setCurrentView('admin')}
-              className="hover:text-white underline focus:outline-hidden focus:ring-1 focus:ring-white rounded px-1"
+              className="hover:text-white underline focus:outline-hidden focus:ring-1 focus:ring-white rounded px-1 cursor-pointer"
             >
-              Admin Portal
+              {t.adminTitle}
             </button>
           </div>
         </div>

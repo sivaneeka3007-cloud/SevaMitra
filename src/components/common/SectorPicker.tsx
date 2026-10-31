@@ -1,11 +1,13 @@
 import React from 'react';
-import { AVAILABLE_SECTORS } from '../../config/sectors';
-import { SectorId } from '../../types';
+import { AVAILABLE_SECTORS, getLocalizedSectorConfig } from '../../config/sectors';
+import { getTranslations } from '../../i18n';
+import { LanguageCode, SectorId } from '../../types';
 import { HardHat, PlusSquare } from 'lucide-react';
 
 interface SectorPickerProps {
   activeSectorId: SectorId;
   onSelectSector: (sectorId: SectorId) => void;
+  language?: LanguageCode;
   className?: string;
   variant?: 'compact' | 'cards';
 }
@@ -13,9 +15,12 @@ interface SectorPickerProps {
 export const SectorPicker: React.FC<SectorPickerProps> = ({
   activeSectorId,
   onSelectSector,
+  language = 'en',
   className = '',
   variant = 'compact',
 }) => {
+  const t = getTranslations(language);
+
   const getSectorIcon = (id: SectorId, className = 'w-4 h-4 sm:w-5 sm:h-5 shrink-0') => {
     if (id === 'construction') {
       return <HardHat className={className} aria-hidden="true" />;
@@ -28,9 +33,10 @@ export const SectorPicker: React.FC<SectorPickerProps> = ({
       <div
         className={`w-full grid grid-cols-1 sm:grid-cols-2 gap-3 ${className}`}
         role="radiogroup"
-        aria-label="Industry Sector Selection"
+        aria-label={t.sectorSelection}
       >
-        {AVAILABLE_SECTORS.map((sector) => {
+        {AVAILABLE_SECTORS.map((rawSector) => {
+          const sector = getLocalizedSectorConfig(rawSector.id, language);
           const isSelected = activeSectorId === sector.id;
           const isConstruction = sector.id === 'construction';
 
@@ -72,7 +78,7 @@ export const SectorPicker: React.FC<SectorPickerProps> = ({
                         isConstruction ? 'bg-[#D9531E]' : 'bg-[#0E8373]'
                       }`}
                     >
-                      Selected
+                      {t.selected}
                     </span>
                   )}
                 </div>
@@ -92,9 +98,10 @@ export const SectorPicker: React.FC<SectorPickerProps> = ({
     <div
       className={`w-full grid grid-cols-2 gap-1 p-1 bg-[#FAF6EF] rounded-2xl border-2 border-[#E6DCBF] ${className}`}
       role="radiogroup"
-      aria-label="Select Sector"
+      aria-label={t.selectSector}
     >
-      {AVAILABLE_SECTORS.map((sector) => {
+      {AVAILABLE_SECTORS.map((rawSector) => {
+        const sector = getLocalizedSectorConfig(rawSector.id, language);
         const isSelected = activeSectorId === sector.id;
         const isConstruction = sector.id === 'construction';
 
